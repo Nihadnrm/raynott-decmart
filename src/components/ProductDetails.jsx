@@ -9,6 +9,7 @@ const ProductDetails = () => {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // Alert state
   const [alertMsg, setAlertMsg] = useState("");
   const [alertType, setAlertType] = useState("success");
   const [showAlert, setShowAlert] = useState(false);
@@ -17,7 +18,13 @@ const ProductDetails = () => {
     setAlertMsg(msg);
     setAlertType(type);
     setShowAlert(true);
-    setTimeout(() => setShowAlert(false), 1800);
+    setTimeout(() => setShowAlert(false), 2000);
+  };
+
+  // Check if logged in
+  const isUserLoggedIn = () => {
+    const user = JSON.parse(sessionStorage.getItem("userData"));
+    return !!user;
   };
 
   // Load product details
@@ -38,9 +45,9 @@ const ProductDetails = () => {
     loadProduct();
   }, [id]);
 
+  // Add To Cart
   const handleAddToCart = async () => {
-    const user = JSON.parse(sessionStorage.getItem("userData"));
-    if (!user) {
+    if (!isUserLoggedIn()) {
       showPopup("Please login to add items to cart", "error");
       return;
     }
@@ -53,7 +60,13 @@ const ProductDetails = () => {
     }
   };
 
+  // Order
   const handleOrder = () => {
+    if (!isUserLoggedIn()) {
+      showPopup("Please login first to order", "error");
+      return;
+    }
+
     localStorage.setItem("product", JSON.stringify(product));
     navigate("/checkout");
   };
@@ -72,20 +85,34 @@ const ProductDetails = () => {
 
   return (
     <div className="px-4 sm:px-6 md:px-20 py-10">
-
-      {/* POPUP */}
+      
+      {/* Modern Popup */}
       {showAlert && (
         <div
           className={`fixed left-1/2 transform -translate-x-1/2 bottom-8 px-6 py-3 rounded-lg shadow-lg text-white font-semibold 
-            ${alertType === "success" ? "bg-green-600" : "bg-red-600"}`}
+          animate-bounce-small
+          ${alertType === "success" ? "bg-green-600" : "bg-red-600"}`}
         >
           {alertMsg}
         </div>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
+      <style>
+        {`
+          @keyframes bounceSmall {
+            0% { transform: translate(-50%, 20px); opacity: 0; }
+            50% { transform: translate(-50%, -5px); opacity: 1; }
+            100% { transform: translate(-50%, 0px); opacity: 1; }
+          }
+          .animate-bounce-small {
+            animation: bounceSmall 0.4s ease-out;
+          }
+        `}
+      </style>
 
-        {/* PRODUCT IMAGE */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
+        
+        {/* IMAGE */}
         <div className="w-full flex justify-center">
           <img
             src={product.image}
@@ -94,7 +121,7 @@ const ProductDetails = () => {
           />
         </div>
 
-        {/* PRODUCT DETAILS */}
+        {/* DETAILS */}
         <div className="space-y-5">
           <h1 className="text-3xl sm:text-4xl font-bold">{product.name}</h1>
 
@@ -115,7 +142,7 @@ const ProductDetails = () => {
             ⭐ Rating: {product.rating || "4.5"}
           </p>
 
-          {/* BUTTONS */}
+          {/* ACTION BUTTONS */}
           <div className="flex flex-col sm:flex-row gap-4 pt-4">
             <button
               onClick={handleAddToCart}

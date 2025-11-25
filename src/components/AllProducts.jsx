@@ -25,10 +25,14 @@ const AllProducts = () => {
     setTimeout(() => setShowAlert(false), 2000);
   };
 
-  const handleAddToCart = async (item) => {
+  const isUserLoggedIn = () => {
     const user = JSON.parse(sessionStorage.getItem("userData"));
+    return !!user;
+  };
 
-    if (!user) {
+  // ⭐ ADD TO CART
+  const handleAddToCart = async (item) => {
+    if (!isUserLoggedIn()) {
       showPopup("Please login to add to cart", "error");
       return;
     }
@@ -42,7 +46,13 @@ const AllProducts = () => {
     }
   };
 
+  // ⭐ ORDER NOW – BLOCK WHEN NOT LOGGED IN
   const handleOrder = (item) => {
+    if (!isUserLoggedIn()) {
+      showPopup("Please login first to order", "error");
+      return;
+    }
+
     localStorage.setItem("product", JSON.stringify(item));
     navigate("/checkout");
   };
@@ -63,13 +73,11 @@ const AllProducts = () => {
     fetchData();
   }, []);
 
-  // FILTER PRODUCTS WHEN CATEGORY CHANGES
+  // FILTER PRODUCTS
   useEffect(() => {
     if (category) {
       const filtered = products.filter(
-        (p) =>
-          p.category &&
-          p.category.toLowerCase() === category.toLowerCase()
+        (p) => p.category && p.category.toLowerCase() === category.toLowerCase()
       );
       setFilteredProducts(filtered);
     } else {
@@ -79,16 +87,31 @@ const AllProducts = () => {
 
   return (
     <div className="relative py-12 px-4 sm:px-6 md:px-14 lg:px-20">
-
+      
+      {/* Modern animated popup */}
       {showAlert && (
         <div
-          className={`fixed left-1/2 transform -translate-x-1/2 bottom-6 px-6 py-3 rounded-lg shadow-lg text-white font-semibold ${
-            alertType === "success" ? "bg-green-600" : "bg-red-600"
-          }`}
+          className={`fixed left-1/2 transform -translate-x-1/2 bottom-6 px-6 py-3 
+            rounded-lg shadow-xl text-white font-semibold 
+            animate-bounce-small
+            ${alertType === 'success' ? 'bg-green-600' : 'bg-red-600'}`}
         >
           {alertMsg}
         </div>
       )}
+
+      <style>
+        {`
+          @keyframes bounceSmall {
+            0% { transform: translate(-50%, 20px); opacity: 0; }
+            50% { transform: translate(-50%, -5px); opacity: 1; }
+            100% { transform: translate(-50%, 0px); opacity: 1; }
+          }
+          .animate-bounce-small {
+            animation: bounceSmall 0.4s ease-out;
+          }
+        `}
+      </style>
 
       <h1 className="text-3xl md:text-4xl font-bold text-center mb-10">
         {category ? `${category} Products` : "All Products"}
@@ -97,9 +120,7 @@ const AllProducts = () => {
       {loading && <p className="text-center text-gray-600">Loading...</p>}
 
       {!loading && (
-        <div
-          className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
-        >
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {filteredProducts.length > 0 ? (
             filteredProducts.map((item) => (
               <div
