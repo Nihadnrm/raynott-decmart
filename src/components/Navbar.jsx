@@ -36,6 +36,7 @@ const Navbar = () => {
         {/* Desktop Menu */}
         <ul className="hidden md:flex gap-8 text-gray-700 font-medium">
           <Link to="/"><li className="hover:text-black cursor-pointer">Home</li></Link>
+          <Link to="/about"><li className="hover:text-black cursor-pointer">About</li></Link>
           <Link to="/allproducts"><li className="hover:text-black cursor-pointer">Products</li></Link>
 
           {user && (
@@ -43,6 +44,8 @@ const Navbar = () => {
               <li className="hover:text-black cursor-pointer">My Orders</li>
             </Link>
           )}
+                    <Link to="/admin"><li className="hover:text-black cursor-pointer">Admin</li></Link>
+
         </ul>
 
         {/* Desktop Right Section */}

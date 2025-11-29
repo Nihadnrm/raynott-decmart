@@ -18,6 +18,11 @@ import AdminOrders from './admin/AdminOrders'
 import AdminUsers from './admin/AdminUsers'
 import Messages from './admin/Messages'
 import Auth from './components/Auth'
+import About from './components/About'
+
+
+
+
 
 
 
@@ -55,6 +60,8 @@ function App() {
       <Route path='/users' element={<AdminUsers/>}/>
       <Route path='/messages' element={<Messages/>}/>
       <Route path='/auth' element={<Auth/>}/>
+      <Route path='/about' element={<About/>}/>
+       
 
 
 
