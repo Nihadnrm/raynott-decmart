@@ -96,7 +96,7 @@ const MyOrders = () => {
         ))
       ) : (
         <h3 className="text-center text-gray-500">No orders found</h3>
-      )}
+      )} 
     </div>
   );
 };
